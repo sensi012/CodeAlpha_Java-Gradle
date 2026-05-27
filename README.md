@@ -110,8 +110,6 @@ java -version      # Should show: openjdk version "17.x.x"
 
 ### Step 1 — Clone the Repository
 ```bash
-git clone https://github.com/YOURUSERNAME/CodeAlpha_JavaGradle.git
-cd CodeAlpha_JavaGradle
 ```
 
 ### Step 2 — Build the Project
@@ -128,12 +126,8 @@ This compiles the code, runs tests, and creates a `.jar` file.
 **Expected Output:**
 ```
 =======================================
-  CodeAlpha DevOps Internship
-  Java App built with Gradle!
-  Developer: [Adepegba Isaiah]
+Hello from Gradle-built Java app!
 =======================================
-5 + 3 = 8
-10 - 4 = 6
 ```
 
 ### Step 4 — Run Tests Only
@@ -158,23 +152,25 @@ java -jar app/build/libs/app.jar
 
 ```groovy
 plugins {
-    id 'application'      // Enables the 'run' task
+    id 'java'
+    id 'application'
 }
 
 repositories {
-    mavenCentral()        // Where Gradle downloads dependencies from
+    mavenCentral()
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'  // Testing library
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 application {
-    mainClass = 'com.codealpha.App'   // Entry point of the app
+    mainClass = 'com.example.App'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()    // Use JUnit 5 for running tests
+test {
+    useJUnitPlatform()
 }
 ```
 
@@ -183,35 +179,28 @@ tasks.named('test') {
 ## 🤖 CI/CD Pipeline (.github/workflows/gradle.yml)
 
 ```yaml
-name: Java CI with Gradle
+name: Java Gradle CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-
+    - uses: actions/checkout@v4
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-
-    - name: Run Tests
-      run: ./gradlew test
-
-    - name: Package Application
-      run: ./gradlew jar
 ```
 
 Every push to `main` triggers this pipeline automatically on GitHub.
